@@ -17,6 +17,7 @@ limitations under the License.
 {{- if .Values.manifests.daemonset_osd }}
 {{- $envAll := . }}
 {{- if .Values.deployment.ceph }}
+{{- if .Values.osd_directory.enabled }}
 {{- $dependencies := .Values.dependencies.osd }}
 ---
 kind: DaemonSet
@@ -181,5 +182,6 @@ spec:
         - name: osd-directory
           hostPath:
             path: {{ .Values.ceph.storage.osd_directory }}
+{{- end }}
 {{- end }}
 {{- end }}

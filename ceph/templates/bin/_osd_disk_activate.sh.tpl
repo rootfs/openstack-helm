@@ -8,7 +8,9 @@ function osd_activate {
   fi
 
   CEPH_DISK_OPTIONS=""
-  DATA_UUID=$(blkid -o value -s PARTUUID ${OSD_DEVICE}1)
+  CEPH_OSD_OPTIONS=""
+
+  DATA_UUID=$(blkid -o value -s PARTUUID ${OSD_DEVICE}*1)
   LOCKBOX_UUID=$(blkid -o value -s PARTUUID ${OSD_DEVICE}3 || true)
   JOURNAL_PART=$(dev_part ${OSD_DEVICE} 2)
   ACTUAL_OSD_DEVICE=$(readlink -f ${OSD_DEVICE}) # resolve /dev/disk/by-* names
@@ -18,8 +20,9 @@ function osd_activate {
 
   # wait till partition exists then activate it
   if [[ -n "${OSD_JOURNAL}" ]]; then
-    wait_for_file ${OSD_DEVICE}
+    wait_for_file ${OSD_JOURNAL}
     chown ceph. ${OSD_JOURNAL}
+    CEPH_OSD_OPTIONS="${CEPH_OSD_OPTIONS} --osd-journal ${OSD_JOURNAL}"
   else
     wait_for_file $(dev_part ${OSD_DEVICE} 1)
     chown ceph. $JOURNAL_PART
@@ -47,5 +50,5 @@ function osd_activate {
   ceph ${CLI_OPTS} --name=osd.${OSD_ID} --keyring=$OSD_KEYRING osd crush create-or-move -- ${OSD_ID} ${OSD_WEIGHT} ${CRUSH_LOCATION}
 
   log "SUCCESS"
-  exec /usr/bin/ceph-osd ${CLI_OPTS} -f -i ${OSD_ID} --setuser ceph --setgroup disk
+  exec /usr/bin/ceph-osd ${CLI_OPTS} ${CEPH_OSD_OPTIONS} -f -i ${OSD_ID} --setuser ceph --setgroup disk
 }

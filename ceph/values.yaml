@@ -306,6 +306,15 @@ ceph:
     mon_log: /var/log/ceph/mon
     osd_log: /var/log/ceph/osd
 
+osd_directory:
+  enabled: false
+
+osd_devices:
+  - name: dev-sdc
+    device: /dev/sdc
+    journal: /dev/sdd
+    zap: "1"
+
 bootstrap:
   enabled: false
   script: |
