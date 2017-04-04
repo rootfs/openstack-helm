@@ -23,6 +23,9 @@ helm_build
 helm search
 
 if [ "x$PVC_BACKEND" == "xceph" ]; then
+  kubectl label nodes ceph-osd-device-dev-loop0=enabled --all
+  kubectl label nodes ceph-osd-device-dev-loop1=enabled --all
+
   if [ "x$INTEGRATION" == "xmulti" ]; then
     SUBNET_RANGE="$(find_multi_subnet_range)"
   else
@@ -43,7 +46,8 @@ if [ "x$PVC_BACKEND" == "xceph" ]; then
       --set deployment.client_secrets=false \
       --set deployment.rgw_keystone_user_and_endpoints=false \
       --set bootstrap.enabled=true \
-      --values=${WORK_DIR}/tools/overrides/mvp/ceph.yaml
+      --values=${WORK_DIR}/tools/overrides/mvp/ceph.yaml \
+      --values=${WORK_DIR}/tools/overrides/mvp/ceph_disks.yaml
   else
     helm install --namespace=ceph ${WORK_DIR}/ceph --name=ceph \
       --set endpoints.identity.namespace=openstack \
@@ -58,6 +62,9 @@ if [ "x$PVC_BACKEND" == "xceph" ]; then
       --set deployment.client_secrets=false \
       --set deployment.rgw_keystone_user_and_endpoints=false \
       --set bootstrap.enabled=true
+      --set manifests_enabled.client_secrets=false \
+      --set bootstrap.enabled=true \
+      --values=${WORK_DIR}/tools/overrides/mvp/ceph_disks.yaml
   fi
 
   kube_wait_for_pods ceph ${SERVICE_LAUNCH_TIMEOUT}

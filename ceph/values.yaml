@@ -285,6 +285,15 @@ ceph:
     var_directory: /var/lib/openstack-helm/ceph/ceph
     mon_directory: /var/lib/openstack-helm/ceph/mon
 
+osd_directory:
+  enabled: false
+
+osd_devices:
+  - name: dev-sdc
+    device: /dev/sdc
+    journal: /dev/sdd
+    zap: "1"
+
 bootstrap:
   enabled: false
   script: |
