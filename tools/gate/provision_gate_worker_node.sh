@@ -19,6 +19,7 @@ export HOST_OS=${ID}
 source ${WORK_DIR}/tools/gate/funcs/common.sh
 source ${WORK_DIR}/tools/gate/funcs/network.sh
 source ${WORK_DIR}/tools/gate/funcs/kube.sh
+source ${WORK_DIR}/tools/gate/funcs/disk.sh
 
 # Do the basic node setup for running the gate
 gate_base_setup

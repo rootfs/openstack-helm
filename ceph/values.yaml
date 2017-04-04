@@ -23,6 +23,8 @@ replicas:
   mon_check: 1
   rbd_provisioner: 2
 
+debug: verbose
+
 service:
   mon:
     name: ceph-mon
@@ -149,7 +151,6 @@ conf:
         cephx_require_signatures: false
         cephx_cluster_require_signatures: true
         cephx_service_require_signatures: false
-
         max_open_files: 131072
         osd_pool_default_pg_num: 128
         osd_pool_default_pgp_num: 128
@@ -242,6 +243,14 @@ ceph:
     osd_directory: /var/lib/openstack-helm/ceph/osd
     var_directory: /var/lib/openstack-helm/ceph/ceph
     mon_directory: /var/lib/openstack-helm/ceph/mon
+
+osd_directory:
+  enabled: false
+
+osd_devices:
+  - name: dev-sdc
+    device: /dev/sdc
+    zap: "1"
 
 # rgw is optionally disabled
 rgw:

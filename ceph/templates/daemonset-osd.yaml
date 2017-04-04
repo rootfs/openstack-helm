@@ -15,6 +15,7 @@ limitations under the License.
 */}}
 
 {{- if .Values.manifests_enabled.deployment }}
+{{ if .Values.osd_directory.enabled }}
 {{- $envAll := . }}
 {{- $dependencies := .Values.dependencies.osd }}
 ---
@@ -147,4 +148,5 @@ spec:
         - name: osd-directory
           hostPath:
             path: {{ .Values.ceph.storage.osd_directory }}
-{{- end }}
+{{ end }}
+{{ end }}
