@@ -30,7 +30,7 @@ images:
   dep_check: docker.io/kolla/ubuntu-source-kubernetes-entrypoint:4.0.0
   daemon: quay.io/attcomdev/ceph-daemon:tag-build-master-jewel-ubuntu-16.04
   ceph_config_helper: docker.io/port/ceph-config-helper:v1.6.7
-  pull_policy: Always
+  pull_policy: IfNotPresent
 
 labels:
   mon:
@@ -50,6 +50,8 @@ labels:
     node_selector_value: enabled
 
 pod:
+  hostNetwork:
+    enabled: false
   resources:
     enabled: false
     osd:
@@ -140,7 +142,7 @@ conf:
         osd_pool_default_min_size: 1
         mon_osd_full_ratio: .95
         mon_osd_nearfull_ratio: .85
-        mon_host: null
+        mon_host: ceph-mon
       mon:
         mon_osd_down_out_interval: 600
         mon_osd_min_down_reporters: 4

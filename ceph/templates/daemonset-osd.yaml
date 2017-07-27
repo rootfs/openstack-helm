@@ -30,7 +30,7 @@ spec:
         {{ .Values.labels.osd.node_selector_key }}: {{ .Values.labels.osd.node_selector_value }}
       initContainers:
 {{ tuple $envAll $dependencies "" | include "helm-toolkit.snippets.kubernetes_entrypoint_init_container" | indent 8 }}
-      hostNetwork: true
+      hostNetwork: {{ .Values.pod.hostNetwork.enabled }}
       containers:
         - name: osd-pod
           image: {{ .Values.images.daemon }}
