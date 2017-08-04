@@ -16,6 +16,7 @@ manifests_enabled:
   storage_secrets: true
   client_secrets: true
   deployment: true
+  provisioner: true
 
 replicas:
   rgw: 3
@@ -30,6 +31,7 @@ images:
   dep_check: docker.io/kolla/ubuntu-source-kubernetes-entrypoint:4.0.0
   daemon: quay.io/attcomdev/ceph-daemon:tag-build-master-jewel-ubuntu-16.04
   ceph_config_helper: docker.io/port/ceph-config-helper:v1.6.8
+  rbd_provisioner: quay.io/external_storage/rbd-provisioner:latest
   pull_policy: "IfNotPresent"
 
 labels:
@@ -218,7 +220,11 @@ dependencies:
     services:
     - service: ceph_mon
       endpoint: internal
-
+  rbdprovisioner:
+    jobs:
+    - service: ceph_mon
+      endpoint: internal
+      
 ceph:
   enabled:
     mds: true
@@ -248,6 +254,7 @@ bootstrap:
 # class definition externally
 storageclass:
   provision_storage_class: true
+  provisioner: ceph.com/rbd
   name: general
   monitors: null
   pool: rbd
