@@ -34,8 +34,8 @@ spec:
       initContainers:
 {{ tuple $envAll $dependencies "" | include "helm-toolkit.snippets.kubernetes_entrypoint_init_container" | indent 8 }}
       hostNetwork: true
-      containers:
-        - name: osd-pod
+      initContainers:
+        - name: osd-prepare-pod
           image: {{ $.Values.images.daemon }}
           imagePullPolicy: {{ $.Values.images.pull_policy }}
           volumeMounts:
@@ -96,7 +96,92 @@ spec:
             privileged: true
           env:
             - name: CEPH_DAEMON
-              value: osd
+              value: OSD_CEPH_DISK_PREPARE
+            - name: KV_TYPE
+              value: k8s
+            - name: CLUSTER
+              value: ceph
+            - name: CEPH_GET_ADMIN_KEY
+              value: "1"
+            - name: OSD_DEVICE
+              value: {{ $value.device }}
+            {{ if index $value "journal" }}
+            - name: JOURNAL
+              value: {{ $value.journal }}
+            {{ end }}
+            - name: OSD_FORCE_ZAP
+              value: {{ $value.zap | quote }}
+            {{ if $.Values.debug }}
+            - name: DEBUG
+              value: {{ $.Values.debug }}
+            {{ end }}
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName        
+      containers:
+        - name: osd-activate-pod
+          image: {{ $.Values.images.daemon }}
+          imagePullPolicy: {{ $.Values.images.pull_policy }}
+          volumeMounts:
+            - name: devices
+              mountPath: /dev
+            - name: ceph
+              mountPath: /var/lib/ceph
+              readOnly: false
+            - name: ceph-bin
+              mountPath: /entrypoint.sh
+              subPath: entrypoint.sh
+              readOnly: true
+            - name: ceph-bin
+              mountPath: /start_osd.sh
+              subPath: start_osd.sh
+              readOnly: true
+            - name: ceph-bin
+              mountPath: /osd_disks.sh
+              subPath: osd_disks.sh
+              readOnly: true
+            - name: ceph-bin
+              mountPath: /osd_disk_activate.sh
+              subPath: osd_disk_activate.sh
+              readOnly: true
+            - name: ceph-bin
+              mountPath: /osd_disk_prepare.sh
+              subPath: osd_disk_prepare.sh
+              readOnly: true
+            - name: ceph-bin
+              mountPath: /common_functions.sh
+              subPath: common_functions.sh
+              readOnly: true
+            - name: ceph-etc
+              mountPath: /etc/ceph/ceph.conf
+              subPath: ceph.conf
+              readOnly: true
+            - name: ceph-client-admin-keyring
+              mountPath: /etc/ceph/ceph.client.admin.keyring
+              subPath: ceph.client.admin.keyring
+              readOnly: false
+            - name: ceph-mon-keyring
+              mountPath: /etc/ceph/ceph.mon.keyring
+              subPath: ceph.mon.keyring
+              readOnly: false
+            - name: ceph-bootstrap-osd-keyring
+              mountPath: /var/lib/ceph/bootstrap-osd/ceph.keyring
+              subPath: ceph.keyring
+              readOnly: false
+            - name: ceph-bootstrap-mds-keyring
+              mountPath: /var/lib/ceph/bootstrap-mds/ceph.keyring
+              subPath: ceph.keyring
+              readOnly: false
+            - name: ceph-bootstrap-rgw-keyring
+              mountPath: /var/lib/ceph/bootstrap-rgw/ceph.keyring
+              subPath: ceph.keyring
+              readOnly: false
+          securityContext:
+            privileged: true
+          env:
+            - name: CEPH_DAEMON
+              value: OSD_CEPH_DISK_ACTIVATE
             - name: KV_TYPE
               value: k8s
             - name: CLUSTER
