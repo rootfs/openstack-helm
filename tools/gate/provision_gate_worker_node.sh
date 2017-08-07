@@ -19,6 +19,7 @@ export HOST_OS=${ID}
 source ${WORK_DIR}/tools/gate/funcs/common.sh
 source ${WORK_DIR}/tools/gate/funcs/network.sh
 source ${WORK_DIR}/tools/gate/funcs/kube.sh
+source ${WORK_DIR}/tools/gate/funcs/disk.sh
 
 # Do the basic node setup for running the gate
 gate_base_setup
@@ -34,6 +35,12 @@ sudo mount --make-shared /var/lib/kubelet
 
 # Clean up any old install
 kubeadm_aio_clean
+
+# Load ceph kernel module if required
+if [ "x$PVC_BACKEND" == "xceph" ]; then
+  sudo modprobe rbd
+  prep_loopback_device
+fi
 
 # Launch Container
 sudo docker run \

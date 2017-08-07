@@ -11,19 +11,17 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-set -ex
+set -e
 
-source ${WORK_DIR}/tools/gate/funcs/network.sh
-source ${WORK_DIR}/tools/gate/funcs/kube.sh
-source ${WORK_DIR}/tools/gate/funcs/disk.sh
-
-kubeadm_aio_reqs_install
-sudo docker pull ${KUBEADM_IMAGE} || kubeadm_aio_build
-
-if [ "x$PVC_BACKEND" == "xceph" ]; then
-  ceph_kube_controller_manager_replace
-  sudo modprobe rbd
-  prep_loopback_device
-fi
-
-kubeadm_aio_launch
+function prep_loopback_device {
+  sudo mkdir -p /data/ceph
+  sudo dd if=/dev/zero of=/data/ceph/ceph-osd0.img bs=1024 count=3 seek=1073741824
+  LOOP=$(sudo losetup -f)
+  sudo losetup $LOOP /data/ceph/ceph-osd0.img
+  sudo parted $LOOP mklabel gpt
+  sudo dd if=/dev/zero of=/data/ceph/ceph-osd1.img bs=1024 count=1 seek=1073741824
+  LOOP=$(sudo losetup -f)
+  sudo losetup $LOOP /data/ceph/ceph-osd1.img
+  sudo parted $LOOP mklabel gpt
+  sudo partprobe
+}

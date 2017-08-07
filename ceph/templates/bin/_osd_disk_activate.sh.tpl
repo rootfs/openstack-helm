@@ -8,7 +8,7 @@ function osd_activate {
   fi
 
   CEPH_DISK_OPTIONS=""
-  DATA_UUID=$(blkid -o value -s PARTUUID ${OSD_DEVICE}1)
+  DATA_UUID=$(blkid -o value -s PARTUUID ${OSD_DEVICE}*1)
   LOCKBOX_UUID=$(blkid -o value -s PARTUUID ${OSD_DEVICE}3 || true)
   JOURNAL_PART=$(dev_part ${OSD_DEVICE} 2)
   ACTUAL_OSD_DEVICE=$(readlink -f ${OSD_DEVICE}) # resolve /dev/disk/by-* names

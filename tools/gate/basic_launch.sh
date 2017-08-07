@@ -40,6 +40,9 @@ if [ "x$PVC_BACKEND" == "xceph" ]; then
   kubectl label nodes ceph-osd=enabled --all
   kubectl label nodes ceph-mds=enabled --all
   CONTROLLER_MANAGER_POD=$(kubectl get -n kube-system pods -l component=kube-controller-manager --no-headers -o name | awk -F '/' '{ print $NF; exit }')
+  kubectl label nodes ceph-osd-device-dev-loop0=enabled --all
+  kubectl label nodes ceph-osd-device-dev-loop1=enabled --all
+
   kubectl exec -n kube-system ${CONTROLLER_MANAGER_POD} -- sh -c "cat > /etc/resolv.conf <<EOF
 nameserver 10.96.0.10
 nameserver ${UPSTREAM_DNS}
@@ -61,13 +64,15 @@ EOF"
       --set network.public=$osd_public_network \
       --set network.cluster=$osd_cluster_network \
       --set bootstrap.enabled=true \
-      --values=${WORK_DIR}/tools/overrides/mvp/ceph.yaml
+      --values=${WORK_DIR}/tools/overrides/mvp/ceph.yaml \
+      --values=${WORK_DIR}/tools/overrides/mvp/ceph_disks.yaml
   else
     helm install --namespace=ceph ${WORK_DIR}/ceph --name=ceph \
       --set manifests_enabled.client_secrets=false \
       --set network.public=$osd_public_network \
       --set network.cluster=$osd_cluster_network \
-      --set bootstrap.enabled=true
+      --set bootstrap.enabled=true \
+      --values=${WORK_DIR}/tools/overrides/mvp/ceph_disks.yaml
   fi
 
   kube_wait_for_pods ceph ${SERVICE_LAUNCH_TIMEOUT}
