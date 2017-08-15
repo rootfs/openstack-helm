@@ -248,8 +248,9 @@ osd_directory:
   enabled: false
 
 osd_devices:
-  - name: dev-sdc
-    device: /dev/sdc
+  - name: dev-sdd
+    device: /dev/sdd
+    journal: /dev/sde
     zap: "1"
 
 # rgw is optionally disabled

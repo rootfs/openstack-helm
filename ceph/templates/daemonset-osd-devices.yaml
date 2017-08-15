@@ -109,7 +109,7 @@ spec:
             - name: OSD_FORCE_ZAP
               value: {{ $value.zap | quote }}
             {{ if index $value "journal" }}
-            - name: JOURNAL
+            - name: OSD_JOURNAL
               value: {{ $value.journal }}
             {{ end }}
             {{ if $.Values.debug }}
@@ -185,8 +185,15 @@ spec:
           securityContext:
             privileged: true
           env:
+            {{ if index $value "journal" }}
             - name: CEPH_DAEMON
+              value: osd_ceph_activate_journal
+            - name: OSD_JOURNAL
+              value: {{ $value.journal }}"1"
+            {{- else }}
+            - name: CEPH_DAEMON            
               value: OSD_CEPH_DISK_ACTIVATE
+            {{ end }}            
             - name: KV_TYPE
               value: k8s
             - name: CLUSTER
@@ -195,10 +202,6 @@ spec:
               value: "1"
             - name: OSD_DEVICE
               value: {{ $value.device }}
-            {{ if index $value "journal" }}
-            - name: OSD_JOURNAL
-              value: {{ $value.journal }}
-            {{ end }}
             {{ if $.Values.debug }}
             - name: DEBUG
               value: {{ $.Values.debug }}
