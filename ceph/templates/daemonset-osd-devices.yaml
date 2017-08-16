@@ -189,7 +189,7 @@ spec:
             - name: CEPH_DAEMON
               value: osd_ceph_activate_journal
             - name: OSD_JOURNAL
-              value: {{ $value.journal }}"1"
+              value: {{ $value.journal }}1
             {{- else }}
             - name: CEPH_DAEMON            
               value: OSD_CEPH_DISK_ACTIVATE
