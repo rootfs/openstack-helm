@@ -45,4 +45,4 @@ mkdir -p /var/lib/ceph/mds/${CLUSTER}-${MDS_NAME}
 mkdir -p /var/lib/ceph/mgr/${CLUSTER}-$MGR_NAME
 
 # Adjust the owner of all those directories
-chown -R ceph. /run/ceph/ /var/lib/ceph/*
+chown -R ceph. /run/ceph/ /var/lib/ceph/* /var/log/ceph
