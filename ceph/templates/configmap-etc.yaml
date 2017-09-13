@@ -43,5 +43,13 @@ metadata:
 data:
   ceph.conf: |+
 {{ include "helm-toolkit.utils.to_ini" .Values.conf.ceph.config | indent 4 }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-conf
+data:
+  fluentd.conf: |
+{{ .Values.conf.fluentd | indent 4 }}
 {{- end }}
 {{- end }}

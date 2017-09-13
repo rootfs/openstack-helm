@@ -144,6 +144,26 @@ spec:
             - name: pod-run
               mountPath: /run
               readOnly: false
+            - name: var-log-ceph
+              mountPath: /var/log/ceph
+              readOnly: false
+        {{ if $.Values.manifests.logging_mon }}
+        - name: fluentd
+          imagePullPolicy: {{ .Values.images.pull_policy }}
+{{ tuple $envAll $envAll.Values.pod.resources.mon | include "helm-toolkit.snippets.kubernetes_resources" | indent 10 }}
+          image:  {{ .Values.images.fluentd }}
+          command:
+             - '/bin/sh'
+             - '-c'
+             - '/usr/sbin/td-agent -c /etc/fluentd-config/fluentd.conf 2>&1 >> /var/log/fluentd.log'
+          volumeMounts:
+            - name: var-log-ceph
+              mountPath: /var/log/ceph
+              readOnly: true
+            - name: fluentd-conf
+              mountPath: /etc/fluentd-config/
+              readOnly: true
+        {{ end }}
       volumes:
         - name: ceph-bin
           configMap:
@@ -173,5 +193,12 @@ spec:
         - name: ceph-bootstrap-rgw-keyring
           secret:
             secretName: {{ .Values.secrets.keyrings.rgw }}
+        - name: var-log-ceph
+          emptyDir: {}
+        - name: fluentd-conf
+          configMap:
+            name: fluentd-conf
+            defaultMode: 0444
+
 {{- end }}
 {{- end }}
