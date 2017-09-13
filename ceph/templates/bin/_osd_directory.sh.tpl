@@ -21,6 +21,8 @@ function osd_directory {
     exit 1
   fi
 
+  chown ceph. /var/log/ceph
+
   # check if anything is present, if not, create an osd and its directory
   if [[ -n "$(find /var/lib/ceph/osd -prune -empty)" ]]; then
     log "Creating osd with ceph --cluster ${CLUSTER} osd create"

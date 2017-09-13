@@ -48,6 +48,8 @@ function get_mon_config {
 
 get_mon_config $IP_VERSION
 
+chown ceph. /var/log/ceph
+
 # If we don't have a monitor keyring, this is a new monitor
 if [ ! -e "$MON_DATA_DIR/keyring" ]; then
   if [ ! -e $MON_KEYRING ]; then

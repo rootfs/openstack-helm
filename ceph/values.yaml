@@ -284,6 +284,9 @@ ceph:
     osd_directory: /var/lib/openstack-helm/ceph/osd
     var_directory: /var/lib/openstack-helm/ceph/ceph
     mon_directory: /var/lib/openstack-helm/ceph/mon
+    # use /var/log for fluentd to collect ceph log
+    mon_log: /var/log/ceph/mon
+    osd_log: /var/log/ceph/osd
 
 bootstrap:
   enabled: false
