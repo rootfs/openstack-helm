@@ -28,6 +28,8 @@ function osd_activate {
     chown ceph. $JOURNAL_PART
   fi
 
+  chown ceph. /var/log/ceph
+
   DATA_PART=$(dev_part ${OSD_DEVICE} 1)
   MOUNTED_PART=${DATA_PART}
 

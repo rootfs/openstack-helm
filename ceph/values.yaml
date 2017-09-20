@@ -312,7 +312,6 @@ osd_directory:
 osd_devices:
   - name: dev-sdc
     device: /dev/sdc
-    journal: /dev/sdd
     zap: "1"
 
 bootstrap:

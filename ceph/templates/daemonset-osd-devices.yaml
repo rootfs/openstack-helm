@@ -168,6 +168,11 @@ spec:
             - name: pod-var-lib-ceph
               mountPath: /var/lib/ceph
               readOnly: false
+            {{ if $.Values.ceph.storage.osd_log }}
+            - name: pod-var-log-ceph
+              mountPath: /var/log/ceph
+              readOnly: false
+            {{ end }}
             - name: pod-run
               mountPath: /run
               readOnly: false
@@ -266,6 +271,11 @@ spec:
             path: /dev
         - name: pod-var-lib-ceph
           emptyDir: {}
+        {{- if $.Values.ceph.storage.osd_log }}
+        - name: pod-var-log-ceph
+          hostPath:
+            path: {{ $.Values.ceph.storage.osd_log }}
+        {{- end }}
         - name: pod-run
           emptyDir:
             medium: "Memory"
