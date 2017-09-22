@@ -46,10 +46,6 @@ spec:
               mountPath: /tmp/init_dirs.sh
               subPath: init_dirs.sh
               readOnly: true
-            - name: ceph-bin
-              mountPath: /variables_entrypoint.sh
-              subPath: variables_entrypoint.sh
-              readOnly: true
             - name: pod-var-lib-ceph
               mountPath: /var/lib/ceph
               readOnly: false
@@ -81,8 +77,10 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: status.podIP
+            - name: KV_TYPE
+              value: k8s
           command:
-            - /start_mon.sh
+            - /entrypoint.sh
           lifecycle:
             preStop:
                 exec:
@@ -101,16 +99,8 @@ spec:
               timeoutSeconds: 5
           volumeMounts:
             - name: ceph-bin
-              mountPath: /start_mon.sh
-              subPath: start_mon.sh
-              readOnly: true
-            - name: ceph-bin
               mountPath: /remove-mon.sh
               subPath: remove-mon.sh
-              readOnly: true
-            - name: ceph-bin
-              mountPath: /common_functions.sh
-              subPath: common_functions.sh
               readOnly: true
             - name: ceph-etc
               mountPath: /etc/ceph/ceph.conf
@@ -124,10 +114,6 @@ spec:
               mountPath: /etc/ceph/ceph.mon.keyring
               subPath: ceph.mon.keyring
               readOnly: false
-            - name: ceph-bin
-              mountPath: /variables_entrypoint.sh
-              subPath: variables_entrypoint.sh
-              readOnly: true
             - name: ceph-bootstrap-osd-keyring
               mountPath: /var/lib/ceph/bootstrap-osd/ceph.keyring
               subPath: ceph.keyring

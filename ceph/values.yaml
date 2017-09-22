@@ -25,7 +25,7 @@ images:
   ks_endpoints: docker.io/kolla/ubuntu-source-heat-engine:3.0.3
   bootstrap: quay.io/attcomdev/ceph-daemon:tag-build-master-jewel-ubuntu-16.04
   dep_check: docker.io/kolla/ubuntu-source-kubernetes-entrypoint:4.0.0
-  daemon: quay.io/attcomdev/ceph-daemon:tag-build-master-jewel-ubuntu-16.04
+  daemon: hchen/ceph-daemon:v1.0.2
   ceph_config_helper: docker.io/port/ceph-config-helper:v1.7.5
   rbd_provisioner: quay.io/external_storage/rbd-provisioner:v0.1.1
   pull_policy: "IfNotPresent"
@@ -215,7 +215,6 @@ conf:
         osd_max_backfills: 2
         osd_recovery_op_priority: 2
         osd_client_op_priority: 63
-        osd_recovery_max_chunk: 1048576
         osd_recovery_threads: 1
         #ports
         ms_bind_port_min: 6800
